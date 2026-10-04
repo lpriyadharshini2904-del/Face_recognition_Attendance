@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Login</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+    <header class="navbar">
+
+        <div class="logo">
+            Face Recognition Attendance
+        </div>
+
+    </header>
+
+
+    <main class="container">
+
+        <section class="welcome">
+
+            <h1>Admin Login</h1>
+
+            <p>
+                Login to manage students and attendance
+            </p>
+
+        </section>
+
+
+        <section class="student-card login-card">
+
+            <div class="card-header">
+                <h2>Administrator</h2>
+            </div>
+
+
+            <form method="POST" action="/login">
+
+                <div class="info-box">
+
+                    <span>Username</span>
+
+                    <input
+                        type="text"
+                        name="username"
+                        placeholder="Enter username"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="info-box">
+
+                    <span>Password</span>
+
+                    <input
+                        type="password"
+                        name="password"
+                        placeholder="Enter password"
+                        required
+                    >
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="register-btn">
+
+                    Login
+
+                </button>
+
+            </form>
+
+
+            {% if error %}
+
+            <div class="attendance-status waiting">
+
+                <span>●</span>
+
+                {{ error }}
+
+            </div>
+
+            {% endif %}
+
+        </section>
+
+    </main>
+
+
+    <footer>
+
+        <p>
+            Face Recognition Attendance System © 2026
+        </p>
+
+    </footer>
+
+</body>
+
+</html>

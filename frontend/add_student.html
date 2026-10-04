@@ -1,0 +1,300 @@
+# --------------------------------------------------
+# ADD STUDENT
+# --------------------------------------------------
+
+@app.route("/add-student", methods=["GET", "POST"])
+def add_student():
+
+    global recognizer
+    global students
+
+    # -----------------------------
+    # SHOW ADD STUDENT PAGE
+    # -----------------------------
+
+    if request.method == "GET":
+        return render_template("add_student.html")
+
+
+    # -----------------------------
+    # GET STUDENT DETAILS
+    # -----------------------------
+
+    name = request.form.get("name", "").strip()
+    roll_no = request.form.get("rollno", "").strip()
+    department = request.form.get("department", "").strip()
+    year = request.form.get("year", "").strip()
+
+
+    if not name or not roll_no or not department or not year:
+        return "All student details are required."
+
+
+    # -----------------------------
+    # CHECK DUPLICATE ROLL NUMBER
+    # -----------------------------
+
+    for student in students.values():
+
+        if student["RollNo"] == roll_no:
+            return f"Roll number {roll_no} already exists."
+
+
+    # -----------------------------
+    # GENERATE NEW FACE ID
+    # -----------------------------
+
+    if students:
+        new_face_id = max(students.keys()) + 1
+    else:
+        new_face_id = 1
+
+
+    print()
+    print("------------------------------------------")
+    print(" New Student Registration")
+    print("------------------------------------------")
+    print("Face ID:", new_face_id)
+    print("Name:", name)
+    print("Roll No:", roll_no)
+    print("Department:", department)
+    print("Year:", year)
+    print("------------------------------------------")
+    print("Camera starting...")
+    print("Look directly at the camera.")
+    print("30 face samples will be captured.")
+    print("Press Q to cancel.")
+    print("------------------------------------------")
+
+
+    # -----------------------------
+    # CAPTURE FACE SAMPLES
+    # -----------------------------
+
+    sample_count = 0
+
+    while sample_count < 30:
+
+        success, frame = camera.read()
+
+        if not success:
+            continue
+
+
+        gray = cv2.cvtColor(
+            frame,
+            cv2.COLOR_BGR2GRAY
+        )
+
+
+        faces = face_detector.detectMultiScale(
+            gray,
+            scaleFactor=1.3,
+            minNeighbors=5,
+            minSize=(100, 100)
+        )
+
+
+        for (x, y, w, h) in faces:
+
+            sample_count += 1
+
+
+            face_image = gray[y:y+h, x:x+w]
+
+
+            file_name = (
+                f"dataset/User."
+                f"{new_face_id}."
+                f"{sample_count}.jpg"
+            )
+
+
+            cv2.imwrite(
+                file_name,
+                face_image
+            )
+
+
+            cv2.rectangle(
+                frame,
+                (x, y),
+                (x+w, y+h),
+                (0, 255, 0),
+                2
+            )
+
+
+            cv2.putText(
+                frame,
+                f"Samples: {sample_count}/30",
+                (x, y - 10),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.8,
+                (0, 255, 0),
+                2
+            )
+
+
+            if sample_count >= 30:
+                break
+
+
+        cv2.imshow(
+            "New Student Registration",
+            frame
+        )
+
+
+        if cv2.waitKey(1) & 0xFF == ord("q"):
+            break
+
+
+    cv2.destroyWindow(
+        "New Student Registration"
+    )
+
+
+    # -----------------------------
+    # CHECK CAPTURE
+    # -----------------------------
+
+    if sample_count < 30:
+
+        print(
+            f"Registration cancelled. "
+            f"{sample_count}/30 samples captured."
+        )
+
+        return (
+            f"Registration cancelled. "
+            f"Only {sample_count}/30 samples captured."
+        )
+
+
+    # -----------------------------
+    # SAVE STUDENT DETAILS
+    # -----------------------------
+
+    student_file_exists = os.path.exists(
+        "students.csv"
+    )
+
+
+    with open(
+        "students.csv",
+        "a",
+        newline=""
+    ) as file:
+
+        writer = csv.writer(file)
+
+        if not student_file_exists:
+
+            writer.writerow([
+                "FaceID",
+                "Name",
+                "RollNo",
+                "Department",
+                "Year"
+            ])
+
+
+        writer.writerow([
+            new_face_id,
+            name,
+            roll_no,
+            department,
+            year
+        ])
+
+
+    # -----------------------------
+    # UPDATE MEMORY
+    # -----------------------------
+
+    students[new_face_id] = {
+        "FaceID": str(new_face_id),
+        "Name": name,
+        "RollNo": roll_no,
+        "Department": department,
+        "Year": year
+    }
+
+
+    # -----------------------------
+    # RETRAIN FACE MODEL
+    # -----------------------------
+
+    training_faces = []
+    training_ids = []
+
+
+    for file_name in os.listdir("dataset"):
+
+        if not file_name.lower().endswith(".jpg"):
+            continue
+
+
+        image_path = os.path.join(
+            "dataset",
+            file_name
+        )
+
+
+        image = cv2.imread(
+            image_path,
+            cv2.IMREAD_GRAYSCALE
+        )
+
+
+        if image is None:
+            continue
+
+
+        try:
+
+            face_id = int(
+                file_name.split(".")[1]
+            )
+
+        except (ValueError, IndexError):
+
+            continue
+
+
+        training_faces.append(image)
+        training_ids.append(face_id)
+
+
+    if training_faces:
+
+        recognizer = (
+            cv2.face.LBPHFaceRecognizer_create()
+        )
+
+
+        recognizer.train(
+            training_faces,
+            np.array(training_ids)
+        )
+
+
+        recognizer.write(
+            "model/trainer.yml"
+        )
+
+
+    print()
+    print("------------------------------------------")
+    print(" Student registered successfully!")
+    print("------------------------------------------")
+    print("Face ID:", new_face_id)
+    print("Name:", name)
+    print("Roll No:", roll_no)
+    print("Samples:", sample_count)
+    print("Model updated successfully.")
+    print("------------------------------------------")
+
+
+    return redirect("/students")

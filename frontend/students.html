@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Student Management</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+    <header class="navbar">
+
+        <div class="logo">
+            Face Recognition Attendance
+        </div>
+
+        <div class="nav-status">
+            ● Admin Panel
+        </div>
+
+    </header>
+
+
+    <main class="container">
+
+        <section class="welcome">
+
+            <h1>Student Management</h1>
+
+            <p>
+                View and manage registered students
+            </p>
+
+        </section>
+
+
+        <section class="attendance-table">
+
+            <div class="table-header">
+
+                <h2>Registered Students</h2>
+
+                <a href="/add-student" class="register-btn">
+                    + Add Student
+                </a>
+
+            </div>
+
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Face ID</th>
+                        <th>Name</th>
+                        <th>Roll No</th>
+                        <th>Department</th>
+                        <th>Year</th>
+                        <th>Action</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for student in students %}
+
+                    <tr>
+
+                        <td>
+                            {{ student.FaceID }}
+                        </td>
+
+                        <td>
+                            {{ student.Name }}
+                        </td>
+
+                        <td>
+                            {{ student.RollNo }}
+                        </td>
+
+                        <td>
+                            {{ student.Department }}
+                        </td>
+
+                        <td>
+                            {{ student.Year }}
+                        </td>
+
+                        <td>
+
+                            <a href="/edit-student/{{ student.FaceID }}">
+                                Edit
+                            </a>
+
+                            &nbsp; | &nbsp;
+
+                            <a href="/delete-student/{{ student.FaceID }}"
+                               onclick="return confirm('Are you sure you want to delete this student?');">
+                                Delete
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+
+                    {% if not students %}
+
+                    <tr>
+
+                        <td colspan="6" class="empty">
+                            No students registered
+                        </td>
+
+                    </tr>
+
+                    {% endif %}
+
+                </tbody>
+
+            </table>
+
+        </section>
+
+
+        <section class="summary">
+
+            <div class="summary-card">
+
+                <span>Total Registered Students</span>
+
+                <strong>
+                    {{ students|length }}
+                </strong>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer>
+
+        <p>
+            Face Recognition Attendance System © 2026
+        </p>
+
+    </footer>
+
+</body>
+
+</html>

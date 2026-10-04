@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Face Recognition Attendance System</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+    <header class="navbar">
+        <div class="logo">
+            Face Recognition Attendance
+        </div>
+
+        <div class="nav-status">
+            ● System Online
+        </div>
+    </header>
+
+
+    <main class="container">
+
+        <section class="welcome">
+            <h1>Attendance Marking</h1>
+            <p>Face Recognition Based Student Attendance System</p>
+        </section>
+
+
+        <section class="dashboard">
+
+            <!-- Camera -->
+            <div class="camera-card">
+
+                <div class="card-header">
+                    <h2>Live Camera</h2>
+                    <span class="live">LIVE</span>
+                </div>
+
+                <div class="camera-box">
+                   <img src="/video" class="camera-feed" alt="Live Camera">
+                </div>
+
+                <p class="instruction">
+                    Please look directly at the camera
+                </p>
+
+            </div>
+
+
+            <!-- Student Details -->
+            <div class="student-card">
+
+                <div class="card-header">
+                    <h2>Student Details</h2>
+                </div>
+
+                <div class="student-info">
+
+                    <div class="info-box">
+                        <span>Name</span>
+                        <strong id="studentName">---</strong>
+                    </div>
+
+                    <div class="info-box">
+                        <span>Roll Number</span>
+                        <strong id="rollNo">---</strong>
+                    </div>
+
+                    <div class="info-box">
+                        <span>Department</span>
+                        <strong id="department">---</strong>
+                    </div>
+
+                    <div class="info-box">
+                        <span>Year</span>
+                        <strong id="year">---</strong>
+                    </div>
+
+                </div>
+
+
+                <div class="attendance-status waiting" id="status">
+                    <span>●</span>
+                    Waiting for recognition
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Today's Summary -->
+
+        <section class="summary">
+
+            <div class="summary-card">
+                <span>Total Students</span>
+                <strong>2</strong>
+            </div>
+
+            <div class="summary-card">
+                <span>Present Today</span>
+                <strong>0</strong>
+            </div>
+
+            <div class="summary-card">
+                <span>Attendance Date</span>
+                <strong id="date">---</strong>
+            </div>
+
+        </section>
+
+
+        <!-- Attendance Table -->
+
+        <section class="attendance-table">
+
+            <div class="table-header">
+                <h2>Today's Attendance</h2>
+            </div>
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Roll No</th>
+                        <th>Name</th>
+                        <th>Department</th>
+                        <th>Year</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody id="attendanceBody">
+
+                    <tr>
+                        <td colspan="6" class="empty">
+                            No attendance marked yet
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </section>
+
+    </main>
+
+
+    <footer>
+        <p>Face Recognition Attendance System © 2026</p>
+    </footer>
+
+<script src="/static/script.js"></script>
+
+</body>
+</html>
